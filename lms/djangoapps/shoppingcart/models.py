@@ -1968,10 +1968,11 @@ class CertificateItem(OrderItem):
         # hard coding this url. please check prod-1418 for more detail.
         how_to_uneroll_link = 'https://support.edx.org/hc/en-us/articles/115015783627'
         dashboard_path = reverse('dashboard')
-        dasboard_url = "http://{domain}{path}".format(domain=domain, path=dashboard_path)
+        dashboard_url = "http://{domain}{path}".format(domain=domain, path=dashboard_path)
         refund_reminder_msg = _("To receive a refund you may unenroll from the course on your edX Dashboard "
                                 "({dashboard_url}) up to 14 days after your payment or 14 days after your"
-                                " course starts (up to six months after your payment).").format(dashboard_url=dasboard_url,)
+                                " course starts (up to six months after your payment).\n"
+                                ).format(dashboard_url=dashboard_url)
 
         is_enrollment_mode_verified = self.course_enrollment.is_verified_enrollment()
         is_professional_mode_verified = self.course_enrollment.is_professional_enrollment()
@@ -1986,9 +1987,10 @@ class CertificateItem(OrderItem):
 
         if is_professional_mode_verified:
             refund_reminder_msg = _("You can unenroll in the course and receive a full refund for 2 days after the "
-                                    "course start date.")
+                                    "course start date.\n")
         refund_reminder = _(
-            "{refund_reminder_msg}\nFor help unenrolling, Please see How do I unenroll from a course? "
+            "{refund_reminder_msg}"
+            "For help unenrolling, Please see How do I unenroll from a course? "
             "({how_to_unenroll_link}) in our edX HelpCenter.").format(
             refund_reminder_msg=refund_reminder_msg,
             how_to_unenroll_link=how_to_uneroll_link
