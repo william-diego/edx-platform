@@ -1687,8 +1687,11 @@ def render_xblock(request, usage_key_string, check_if_enrolled=True):
             'display_reset_dates_banner': display_reset_dates_banner,
             'reset_deadlines_url': reset_deadlines_url,
             'reset_deadlines_redirect_url_base': reset_deadlines_redirect_url_base,
-            'reset_deadlines_redirect_url_id_dict': {'course_id': str(course.id), 'usage_key_string': usage_key_string}
+            'reset_deadlines_redirect_url_id_dict': {'course_id': str(course.id), 'usage_key_string': usage_key_string},
+            'is_learning_mfe': request.META.get('HTTP_REFERER', '').startswith(settings.LEARNING_MICROFRONTEND_URL),
         }
+        # import pdb;pdb.set_trace()
+        log.info(repr(context))
         return render_to_response('courseware/courseware-chromeless.html', context)
 
 
