@@ -1970,11 +1970,8 @@ class CertificateItem(OrderItem):
         dashboard_path = reverse('dashboard')
         dasboard_url = "http://{domain}{path}".format(domain=domain, path=dashboard_path)
         refund_reminder_msg = _("To receive a refund you may unenroll from the course on your edX Dashboard "
-                                "({dasboard_url}) up to 14 days after your payment or 14 days after your"
-                                " course starts (up to six months after your payment).\nFor help unenrolling,"
-                                " Please see How do I unenroll from a course? ({how_to_uneroll_link}) in our "
-                                "edX HelpCenter. ").format(dasboard_url=dasboard_url,
-                                                           how_to_uneroll_link=how_to_uneroll_link)
+                                "({dashboard_url}) up to 14 days after your payment or 14 days after your"
+                                " course starts (up to six months after your payment).").format(dashboard_url=dasboard_url,)
 
         is_enrollment_mode_verified = self.course_enrollment.is_verified_enrollment()
         is_professional_mode_verified = self.course_enrollment.is_professional_enrollment()
@@ -1989,13 +1986,19 @@ class CertificateItem(OrderItem):
 
         if is_professional_mode_verified:
             refund_reminder_msg = _("You can unenroll in the course and receive a full refund for 2 days after the "
-                                    "course start date. ")
+                                    "course start date.")
+        refund_reminder = _(
+            "{refund_reminder_msg}\nFor help unenrolling, Please see How do I unenroll from a course? "
+            "({how_to_unenroll_link}) in our edX HelpCenter.").format(
+            refund_reminder_msg=refund_reminder_msg,
+            how_to_unenroll_link=how_to_uneroll_link
+        )
 
         # Need this to be unicode in case the reminder strings
         # have been translated and contain non-ASCII unicode
         return u"{verification_reminder} {refund_reminder}".format(
             verification_reminder=verification_reminder,
-            refund_reminder=refund_reminder_msg
+            refund_reminder=refund_reminder
         )
 
     @classmethod
