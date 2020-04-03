@@ -34,9 +34,12 @@ from six import text_type
 from six.moves import range
 
 from course_modes.models import CourseMode
+
+from lms.djangoapps.branding.api import build_help_center_url
 from lms.djangoapps.courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangoapps.user_api.preferences.api import get_user_preferences
 from openedx.core.djangolib.markup import HTML, Text
 from student.models import CourseEnrollment, EnrollStatusChange
 from student.signals import UNENROLL_DONE
@@ -1962,11 +1965,21 @@ class CertificateItem(OrderItem):
         self.course_enrollment.send_signal(EnrollStatusChange.upgrade_complete,
                                            cost=self.unit_cost, currency=self.currency)
 
+    def get_how_to_unenroll_url(self):
+        user_preferences = get_user_preferences(self.order.user)
+        pref_language = user_preferences.get('pref-lang')
+        support_url = build_help_center_url(pref_language)
+        if 'hc/' not in support_url:
+            support_url += 'hc/en-us'
+
+        # please check prod-1418 for more detail.
+        how_to_unenroll_link = '{support_link}/articles/115015783627'.format(support_link=support_url)
+        return how_to_unenroll_link
+
     def additional_instruction_text(self):
         verification_reminder = ""
         domain = configuration_helpers.get_value('SITE_NAME', settings.SITE_NAME)
-        # hard coding this url. please check prod-1418 for more detail.
-        how_to_uneroll_link = 'https://support.edx.org/hc/en-us/articles/115015783627'
+
         dashboard_path = reverse('dashboard')
         dashboard_url = "http://{domain}{path}".format(domain=domain, path=dashboard_path)
         refund_reminder_msg = _("To receive a refund you may unenroll from the course on your edX Dashboard "
@@ -1993,7 +2006,7 @@ class CertificateItem(OrderItem):
             "For help unenrolling, Please see How do I unenroll from a course? "
             "({how_to_unenroll_link}) in our edX HelpCenter.").format(
             refund_reminder_msg=refund_reminder_msg,
-            how_to_unenroll_link=how_to_uneroll_link
+            how_to_unenroll_link=self.get_how_to_unenroll_url()
         )
 
         # Need this to be unicode in case the reminder strings

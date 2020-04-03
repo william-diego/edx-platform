@@ -222,7 +222,7 @@ def _build_support_form_url(full_path=False):
     return contact_us_page
 
 
-def _build_help_center_url(language):
+def build_help_center_url(language):
     """
     Return the help-center URL based on the language selected on the homepage.
 
@@ -247,7 +247,7 @@ def _footer_connect_links(language=settings.LANGUAGE_CODE):
     links = [
         ("blog", (marketing_link("BLOG"), _("Blog"))),
         ("contact", (_build_support_form_url(full_path=True), _("Contact Us"))),
-        ("help-center", (_build_help_center_url(language), _("Help Center"))),
+        ("help-center", (build_help_center_url(language), _("Help Center"))),
     ]
 
     if language == settings.LANGUAGE_CODE:
@@ -282,7 +282,7 @@ def _footer_navigation_links(language=settings.LANGUAGE_CODE):
             _(u"{platform_name} for Business").format(platform_name=platform_name)
         )),
         ("blog", (marketing_link("BLOG"), _("Blog"))),
-        ("help-center", (_build_help_center_url(language), _("Help Center"))),
+        ("help-center", (build_help_center_url(language), _("Help Center"))),
         ("contact", (_build_support_form_url(), _("Contact"))),
         ("careers", (marketing_link("CAREERS"), _("Careers"))),
         ("donate", (marketing_link("DONATE"), _("Donate"))),
