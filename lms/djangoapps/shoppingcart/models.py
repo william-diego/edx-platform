@@ -1964,39 +1964,38 @@ class CertificateItem(OrderItem):
 
     def additional_instruction_text(self):
         verification_reminder = ""
-        refund_reminder_msg = _("You can unenroll in the course and receive a full refund for 14 days after the course "
-                                "start date. ")
+        domain = configuration_helpers.get_value('SITE_NAME', settings.SITE_NAME)
+        # hard coding this url. please check prod-1418 for more detail.
+        how_to_uneroll_link = 'https://support.edx.org/hc/en-us/articles/115015783627'
+        dashboard_path = reverse('dashboard')
+        dasboard_url = "http://{domain}{path}".format(domain=domain, path=dashboard_path)
+        refund_reminder_msg = _("To receive a refund you may unenroll from the course on your edX Dashboard "
+                                "({dasboard_url}) up to 14 days after your payment or 14 days after your"
+                                " course starts (up to six months after your payment).\nFor help unenrolling,"
+                                " Please see How do I unenroll from a course? ({how_to_uneroll_link}) in our "
+                                "edX HelpCenter. ").format(dasboard_url=dasboard_url,
+                                                           how_to_uneroll_link=how_to_uneroll_link)
+
         is_enrollment_mode_verified = self.course_enrollment.is_verified_enrollment()
         is_professional_mode_verified = self.course_enrollment.is_professional_enrollment()
 
         if is_enrollment_mode_verified:
-            domain = configuration_helpers.get_value('SITE_NAME', settings.SITE_NAME)
             path = reverse('verify_student_verify_now', kwargs={'course_id': six.text_type(self.course_id)})
             verification_url = "http://{domain}{path}".format(domain=domain, path=path)
 
             verification_reminder = _(
-                u"If you haven't verified your identity yet, please start the verification process ({verification_url})."
-            ).format(verification_url=verification_url)
+                u"If you haven't verified your identity yet, please start the verification process"
+                u" ({verification_url}).").format(verification_url=verification_url)
 
         if is_professional_mode_verified:
             refund_reminder_msg = _("You can unenroll in the course and receive a full refund for 2 days after the "
                                     "course start date. ")
 
-        refund_reminder = _(
-            u"{refund_reminder_msg}"
-            u"To receive your refund, contact {billing_email}. "
-            u"Please include your order number in your email. "
-            u"Please do NOT include your credit card information."
-        ).format(
-            refund_reminder_msg=refund_reminder_msg,
-            billing_email=settings.PAYMENT_SUPPORT_EMAIL
-        )
-
         # Need this to be unicode in case the reminder strings
         # have been translated and contain non-ASCII unicode
         return u"{verification_reminder} {refund_reminder}".format(
             verification_reminder=verification_reminder,
-            refund_reminder=refund_reminder
+            refund_reminder=refund_reminder_msg
         )
 
     @classmethod
