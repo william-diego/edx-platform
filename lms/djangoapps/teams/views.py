@@ -573,7 +573,7 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
         # Course and global staff, as well as discussion "privileged" users, will not automatically
         # be added to a team when they create it. They are allowed to create multiple teams.
         is_team_administrator = (has_access(request.user, 'staff', course_key)
-                              or has_discussion_privileges(request.user, course_key))
+                                 or has_discussion_privileges(request.user, course_key))
         if not is_team_administrator and (
             CourseTeamMembership.user_in_team_for_course(request.user, course_key, topic_id=topic_id)
         ):
