@@ -1732,7 +1732,7 @@ class TestDetailTopicAPI(TeamAPITestCase):
         nonexistant topics 404, and if someone doesn't have access to a private_managed teamset, as far as they know
         the teamset does not exist.
 
-        TODO: only staff and sot1ps1 should get the topic. everyone else should 404. 
+        TODO: only staff and sot1ps1 should get the topic. everyone else should 404.
         """
         topic = self.get_topic_detail(
             topic_id='private_topic_1_id',
