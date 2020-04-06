@@ -572,9 +572,9 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
 
         # Course and global staff, as well as discussion "privileged" users, will not automatically
         # be added to a team when they create it. They are allowed to create multiple teams.
-        team_administrator = (has_access(request.user, 'staff', course_key)
+        is_team_administrator = (has_access(request.user, 'staff', course_key)
                               or has_discussion_privileges(request.user, course_key))
-        if not team_administrator and (
+        if not is_team_administrator and (
             CourseTeamMembership.user_in_team_for_course(request.user, course_key, topic_id=topic_id)
         ):
             error_message = build_api_error(
@@ -603,7 +603,7 @@ class TeamsListView(ExpandableFieldViewMixin, GenericAPIView):
             emit_team_event('edx.team.created', course_key, {
                 'team_id': team.team_id
             })
-            if not team_administrator:
+            if not is_team_administrator:
                 # Add the creating user to the team.
                 team.add_user(request.user)
                 emit_team_event(
