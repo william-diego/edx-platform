@@ -935,12 +935,12 @@ class SoftwareSecurePhotoVerification(PhotoVerification):
             return fake_response
 
         headers, body = self.create_request(copy_id_photo_from=copy_id_photo_from)
-
+        ca_bundle_path = os.path.join(os.getcwd(), 'DigiCertSHA2SecureServerCA.pem')
         response = requests.post(
             settings.VERIFY_STUDENT["SOFTWARE_SECURE"]["API_URL"],
             headers=headers,
             data=simplejson.dumps(body, indent=2, sort_keys=True, ensure_ascii=False).encode('utf-8'),
-            verify=False
+            verify=ca_bundle_path
         )
 
         log.info(u"Sent request to Software Secure for receipt ID %s.", self.receipt_id)
