@@ -7,12 +7,12 @@ If student have answered - Question with statistics for each answers.
 """
 
 
-import cgi
 import json
 import logging
 from collections import OrderedDict
 from copy import deepcopy
 
+from django.utils import html
 from pkg_resources import resource_string
 
 import six
@@ -152,12 +152,12 @@ class PollModule(PollFields, XModule):
             # Set default count for answer = 0.
             if answer['id'] not in temp_poll_answers:
                 temp_poll_answers[answer['id']] = 0
-            answers_to_json[answer['id']] = cgi.escape(answer['text'])
+            answers_to_json[answer['id']] = html.escape(answer['text'])
         self.poll_answers = temp_poll_answers
 
         return json.dumps({
             'answers': answers_to_json,
-            'question': cgi.escape(self.question),
+            'question': html.escape(self.question),
             # to show answered poll after reload:
             'poll_answer': self.poll_answer,
             'poll_answers': self.poll_answers if self.voted else {},
